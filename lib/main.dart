@@ -1,23 +1,25 @@
-
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:furibase_firestore_write/view/rooms_list_show.dart';
-import 'package:furibase_firestore_write/view/home_builder.dart';
+import 'package:furibase_firestore_write/view/my_home_page.dart';
+import 'auth/Screens/Login/login_screen.dart';
 
-import 'class/class_object.dart';
-import 'class/constant.dart';
-
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,85 +28,37 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Home Builder'),
-    );
-  }
-}
+      home: //const MyHomePage(title: 'Home Builder'),
+          FutureBuilder(
+        future: _fbApp,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            // print("you have error");
+            return const Text("Somethong went wrong");
+          } else if (snapshot.hasData) {
+            return StreamBuilder(
+                stream: FirebaseAuth.instance.userChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.active) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final user = snapshot.data;
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  late Home home=Home();
-
-  void _roomDropInHome({required Room room }){
-    setState(() {
-      home.rooms.add(room);
-      
-    });
-  }
- 
-  
-
-  @override
-  Widget build(BuildContext context) {
-   Size size =MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children:<Widget> [
-
-            title(size: size, titleName:"Rooms List"),
-            RoomsListShow(size: size, rooms:rooms, hOme:home),
-
-            title(size: size, titleName:"Home"),
-
-            
-              DragTarget<Room>(
-                builder: (context, candidateItems, rejectedItems) {
-                return HomeBuilder(
-                  home :home,
-                  room:rooms[1],
-                  size: size,);},
-
-                onAccept: (room) {
-                  _roomDropInHome(room:room);},
-        ), 
-          ]
-          
-        ),
+                  if (user != null) {
+                    return const MyHomePage(title: 'Home Builder');
+                  } else {
+                    return const LoginScreenApp();
+                  }
+                });
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
-  }
-}
-
-
-/*title widget */
-class title extends StatelessWidget {
-  const title({
-    Key? key,
-    required this.size,required this.titleName,
-  }) : super(key: key);
-
-  final Size size;final String titleName;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.all(size.height*0.01),
-    child: Text(titleName, style: TextStyle(
-      color: Colors.black,
-       fontSize: size.height*0.03,
-     fontWeight: FontWeight.bold),));
   }
 }
