@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:furibase_firestore_write/auth/services/auth.dart';
 import 'package:furibase_firestore_write/class/constant.dart';
-
 import 'package:furibase_firestore_write/class/home_object.dart';
-
 import 'package:furibase_firestore_write/view/show_all_object.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +19,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future<UserLocal> getNameUidEmail() async {
+    //getNameUidEmail
+    //object: get the saved email, name and uid in SharedPreferences
+    //input: void
+    // Output: 1. UserLocal
+    //            UserLocal is an object contains three string email, uid and name
+    //         Show home_object.dart script
     final SharedPreferences prefs = await _prefs;
     final String nAme = (prefs.getString('name') ?? '');
     final String uId = (prefs.getString('uid') ?? '');
@@ -34,6 +37,10 @@ class _MyHomePageState extends State<MyHomePage> {
     //FireAuth.logOut(context: context);
 
     getHome({required DocumentReference<Home> fireHome}) async {
+      //getHome
+      // object: get the saved home in firebase and set in homeConstant
+      // input: 1. DocumentReference<Home>
+      // output: the saved home in firebase or new home object
       return await fireHome
           .get()
           .then((snapshot) => homeConstant = snapshot.data()!)
@@ -47,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SingleChildScrollView(
         child: FutureBuilder<UserLocal>(
+            //  FutureBuilder is used here to get the UserLocal (getNameUidEmail)
             future: getNameUidEmail(),
             builder: (BuildContext context, AsyncSnapshot<UserLocal> snapshot) {
               switch (snapshot.connectionState) {
@@ -58,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   } else {
                     var testUser = snapshot.data;
                     if (testUser != null && testUser.uid != '') {
+                      // if snapshot has data, the data is used to create DocumentReference<Home> 'fireHome'
                       final fireHome = FirebaseFirestore.instance
                           .collection('User')
                           .doc(snapshot.data!.uid)
@@ -70,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       UserLocal user = snapshot.data!;
                       // get home object from firebase
                       return FutureBuilder<Home>(
+                          //  FutureBuilder is used here to get the home from firbase (getHome)
                           future: getHome(fireHome: fireHome),
                           builder: (BuildContext context,
                               AsyncSnapshot<Home> snapshot) {
@@ -82,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   return Text('Error: ${snapshot.error}');
                                 } else {
                                   if (snapshot.data != null) {
+                                    // if snapshot has data go to ShowAllObject class
                                     return ShowAllObject(
                                       size: size,
                                       user: user,
@@ -108,12 +119,20 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 Future<void> setHomeInFirestore(
-    {required Home home, required DocumentReference<Home> fireHome}) async {
+    // setHomeInFirestore
+    // object: set Home In Firestore
+    {required Home home,
+    required DocumentReference<Home> fireHome}) async {
   await fireHome.set(home).then((value) => print('data add'));
 }
 
 /*title widget */
 class title extends StatelessWidget {
+  // title class return widget text
+  // input: 1. size of screen
+  //        2. titleName: String
+  //output: 1. text  with specific character
+
   const title({
     Key? key,
     required this.size,

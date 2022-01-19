@@ -7,19 +7,27 @@ import 'package:furibase_firestore_write/class/constant.dart';
 import 'package:furibase_firestore_write/class/home_object.dart';
 
 class ObjectsListShow extends StatefulWidget {
-  const ObjectsListShow(
-      {Key? key,
-      required this.size,
-      required this.rooms,
-      this.isCliked = false,
-      this.isFirstList = false})
-      : super(key: key);
+  // ObjectsListShow is a class created in order to show a list of rooms
+  // iput: 1. size: is the size of screen
+  //       2. rooms: list of rooms
+  //       3. isCliked: is a bool used to determine if the list is LongPressDraggable or not
+  //       if isCliked =flase, list is first one; else, list is second one
+  // output:  GridView of rooms list
+
+  // LongPressDraggable is another draggable widget. The only difference between LongPressDraggable
+  // and Draggable is that LongPressDraggable allows you to drag the item on long-pressing over it
+  //while the Draggable can be dragged instantly.
+  const ObjectsListShow({
+    Key? key,
+    required this.size,
+    required this.rooms,
+    this.isCliked = false,
+  }) : super(key: key);
 
   final Size size;
   final List<RoomElement> rooms;
 
   final bool isCliked;
-  final bool isFirstList;
 
   @override
   State<ObjectsListShow> createState() => _ObjectsListShowState();
@@ -27,10 +35,16 @@ class ObjectsListShow extends StatefulWidget {
 
 class _ObjectsListShowState extends State<ObjectsListShow> {
   _deleObjectFromHome(int indexslectedObject) {
+    // _deleObjectFromHome
+    // Object: delete object from homeConsyant
+    // iput: 1. indexslectedObject
     setState(() {
       if (!isRoom.value) {
+        // if isRoom is equal of 'false' the indexslectedObject is an index of room
         homeConstant.rooms.remove(homeConstant.rooms[indexslectedObject]);
       } else {
+        //if isRoom is equal of 'true' the indexslectedObject is an index of applaince
+        // and the index of room is saved in the global variable 'indexRoom'
         homeConstant.rooms[indexRoom].room.appliances.remove(
             homeConstant.rooms[indexRoom].room.appliances[indexslectedObject]);
       }
@@ -53,7 +67,7 @@ class _ObjectsListShowState extends State<ObjectsListShow> {
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                height: widget.isFirstList
+                height: !widget.isCliked
                     ? widget.size.height * 0.4
                     : widget.size.height * 0.2,
                 child: Padding(
@@ -65,7 +79,7 @@ class _ObjectsListShowState extends State<ObjectsListShow> {
                       children: List.generate(widget.rooms.length, (index) {
                         return Center(
                           child: widget.isCliked
-                              ? roomShow(
+                              ? showObject(
                                   index: index,
                                   room: widget.rooms[index].room,
                                   size: widget.size,
@@ -94,16 +108,34 @@ class _ObjectsListShowState extends State<ObjectsListShow> {
     return LongPressDraggable<Room>(
         data: room,
         dragAnchorStrategy: pointerDragAnchorStrategy,
-        feedback: roomShow(
+        feedback: showObject(
             room: room,
             size: size,
             slected: true,
             index: index,
             context: context),
-        child: roomShow(room: room, size: size, context: context));
+        child: showObject(room: room, size: size, context: context));
   }
 
-  roomShow(
+  showObject(
+      // showObject
+      // Object: Show the room in grid view
+      // input: 1. room
+      //        2. size
+      //        3. slected: an bool determine if the object is slected
+      //        4. context
+      //        5. index: an int represent the index of object (applaince ot room)
+      //        6. isCliked: determine the object is in the first or second list
+      // output: 1. Card view contains the name and icon of object
+      //         2. onTap function
+      //            Object: if the object in second list and isRoom=false,
+      //            onTap function change the Value of isRoom and upDate listener and
+      //            save the of room selected in global variale indexRoom
+      //         3. onDoubleTap function
+      //            Object:if the object in second list and isRoom=false
+      //            onDoubleTap function delete the slected room (_deleObjectFromHome)
+      //            elseif the object in second list and isRoom=true
+      //            onDoubleTap function delete the slected applaince (_deleObjectFromHome)
       {required Room room,
       required Size size,
       bool slected = false,
