@@ -58,26 +58,29 @@ class Bill {
 }
 
 class GenralData {
-  const GenralData({
-    this.temperature = "Not activated",
-    this.humidity = "Not activated",
-    this.consomation = "Not activated",
-  });
+  const GenralData(
+      {this.temperature = "10.01",
+      this.humidity = "10.01",
+      this.consomation = "Not activated",
+      this.date = "1/1/1"});
 
   final String temperature;
   final String humidity;
   final String consomation;
+  final String date;
 
   factory GenralData.fromJson(Map<String, dynamic> json) => GenralData(
         temperature: json["temperature"],
         humidity: json["humidity"],
         consomation: json["consomation"],
+        date: json["date"],
       );
 
   Map<String, dynamic> toJson() => {
         "temperature": temperature,
         "humidity": humidity,
         "consomation": consomation,
+        "date": date
       };
 }
 
