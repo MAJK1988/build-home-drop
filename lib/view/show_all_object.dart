@@ -39,8 +39,10 @@ class _ShowState extends State<ShowAllObject> {
     // input : 1. appliance 2. indexRoom
     setState(() {
       homeConstant.rooms[indexRoom].room.appliances.add(ApplianceElement(
-          appliance:
-              Appliance(name: appliance.name, iconPath: appliance.iconPath)));
+          appliance: Appliance(
+              name: appliance.name,
+              iconPath: appliance.iconPath,
+              roomName: homeConstant.rooms[indexRoom].room.name)));
     });
   }
 

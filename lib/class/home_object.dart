@@ -35,9 +35,9 @@ class Home {
 
 class Bill {
   const Bill({
-    this.limitedDay = "Not activated",
-    this.units = "Not activated",
-    this.billPrice = "Not activated",
+    this.limitedDay = "10.01",
+    this.units = "10.01",
+    this.billPrice = "10.01",
   });
 
   final String limitedDay;
@@ -61,7 +61,7 @@ class GenralData {
   const GenralData(
       {this.temperature = "10.01",
       this.humidity = "10.01",
-      this.consomation = "Not activated",
+      this.consomation = "10.01",
       this.date = "1/1/1"});
 
   final String temperature;
@@ -165,7 +165,7 @@ class Appliance {
   Appliance({
     this.name = "Not activated",
     this.iconPath = "Not activated",
-    this.lastActivation = "Not activated",
+    this.lastActivation = "10.01",
     this.status = false,
     this.roomName = "Not activated",
   });

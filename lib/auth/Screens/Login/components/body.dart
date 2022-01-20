@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:furibase_firestore_write/auth/components/rounded_button.dart';
@@ -8,7 +7,6 @@ import 'package:furibase_firestore_write/auth/services/auth.dart';
 import 'package:furibase_firestore_write/auth/services/validotrs.dart';
 
 import 'background.dart';
-
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -21,9 +19,8 @@ class _BodyState extends State<Body> {
   late String email = '', passWord = '';
   late bool setText = true;
   late int count = 0;
-  late Color kPrimaryColor =const Color(0xFF1565C0);
+  late Color kPrimaryColor = const Color(0xFF1565C0);
 
-  
   @override
   Widget build(BuildContext context) {
     if (!setText && count != 0) {
@@ -83,13 +80,11 @@ class _BodyState extends State<Body> {
                   });
                 } else {
                   FireAuth.signInUsingEmailPassword(
-                      email: email, password: passWord, context: context) ;
-
+                      email: email, password: passWord, context: context);
                 }
               },
             ),
             SizedBox(height: size.height * 0.03),
-            
           ],
         ),
       ),
